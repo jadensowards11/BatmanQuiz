@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Gotham Archives | Batman Quiz</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap');
+
+		:root {
+			--ink: #080b12;
+			--night: #101a2a;
+			--night-light: #17253a;
+			--paper: #f3efe3;
+			--muted: #aab4c4;
+			--yellow: #f5c84c;
+			--yellow-dark: #b88716;
+			--red: #ef5b5b;
+			--line: rgba(243, 239, 227, 0.15);
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			color: var(--paper);
+			background: var(--ink);
+			font-family: 'DM Sans', sans-serif;
+			overflow-x: hidden;
+		}
+
+		body::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			pointer-events: none;
+			opacity: 0.12;
+			background-image: radial-gradient(#fff 0.65px, transparent 0.65px);
+			background-size: 5px 5px;
+			mix-blend-mode: soft-light;
+		}
+
+		.page-shell {
+			position: relative;
+			min-height: 100vh;
+			isolation: isolate;
+			background:
+				radial-gradient(circle at 78% 17%, rgba(245, 200, 76, 0.14), transparent 18rem),
+				linear-gradient(115deg, var(--ink) 0%, var(--night) 62%, #24344d 100%);
+		}
+
+		.skyline {
+			position: absolute;
+			z-index: -1;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 34vh;
+			opacity: 0.8;
+			background:
+				linear-gradient(to top, var(--ink) 0 22%, transparent 22%),
+				linear-gradient(to top, transparent 0 42%, var(--ink) 42% 74%, transparent 74%),
+				linear-gradient(to top, transparent 0 53%, var(--ink) 53% 91%, transparent 91%),
+				linear-gradient(to top, transparent 0 24%, var(--ink) 24% 67%, transparent 67%);
+			background-position: 0 0, 4% 0, 22% 0, 38% 0;
+			background-size: 24% 100%, 19% 100%, 15% 100%, 11% 100%;
+			background-repeat: repeat-x;
+			clip-path: polygon(0 52%, 4% 52%, 4% 37%, 8% 37%, 8% 63%, 13% 63%, 13% 28%, 17% 28%, 17% 55%, 22% 55%, 22% 43%, 27% 43%, 27% 62%, 33% 62%, 33% 18%, 37% 18%, 37% 49%, 42% 49%, 42% 34%, 47% 34%, 47% 57%, 53% 57%, 53% 27%, 58% 27%, 58% 45%, 64% 45%, 64% 21%, 69% 21%, 69% 52%, 75% 52%, 75% 35%, 80% 35%, 80% 64%, 86% 64%, 86% 30%, 92% 30%, 92% 50%, 100% 50%, 100% 100%, 0 100%);
+		}
+
+		.wrap { width: min(1080px, calc(100% - 40px)); margin: 0 auto; }
+
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 28px 0;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.brand { display: flex; align-items: center; gap: 13px; }
+		.brand-mark {
+			width: 38px;
+			height: 26px;
+			position: relative;
+			background: var(--yellow);
+			clip-path: polygon(0 25%, 15% 38%, 24% 0, 38% 29%, 50% 10%, 62% 29%, 76% 0, 85% 38%, 100% 25%, 85% 76%, 72% 100%, 50% 79%, 28% 100%, 15% 76%);
+			filter: drop-shadow(0 0 8px rgba(245, 200, 76, 0.3));
+		}
+		.brand-name { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; }
+		.case-label { color: var(--yellow); font-size: 0.73rem; letter-spacing: 0.16em; text-transform: uppercase; }
+
+		main { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 90px; align-items: center; padding: 76px 0 150px; }
+
+		.intro { animation: rise 0.8s ease both; }
+		.eyebrow { display: flex; align-items: center; gap: 9px; color: var(--yellow); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.19em; text-transform: uppercase; }
+		.eyebrow::before { content: ''; width: 28px; height: 2px; background: var(--yellow); }
+		h1 { max-width: 500px; margin: 20px 0 20px; color: var(--paper); font-family: 'Bebas Neue', Impact, sans-serif; font-size: clamp(4.5rem, 10vw, 8.2rem); line-height: 0.82; letter-spacing: 0.015em; font-weight: 400; }
+		h1 span { color: var(--yellow); display: block; }
+		.intro p { max-width: 390px; margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.7; }
+		.fact { display: flex; gap: 24px; margin-top: 34px; color: var(--muted); font-size: 0.78rem; }
+		.fact strong { display: block; margin-bottom: 4px; color: var(--paper); font-size: 1.2rem; }
+
+		.quiz-panel {
+			position: relative;
+			padding: 30px;
+			color: var(--ink);
+			background: var(--paper);
+			box-shadow: 14px 14px 0 rgba(0, 0, 0, 0.24);
+			animation: rise 0.8s 0.12s ease both;
+		}
+		.quiz-panel::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(8, 11, 18, 0.16); pointer-events: none; }
+		.panel-content { position: relative; }
+		.panel-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; color: #657080; font-size: 0.73rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+		.score { color: var(--yellow-dark); }
+		.progress { width: 100%; height: 5px; margin-bottom: 31px; background: #d9d5c9; }
+		.progress-bar { width: 20%; height: 100%; background: var(--yellow-dark); transition: width 0.35s ease; }
+		.question-number { margin: 0 0 10px; color: var(--yellow-dark); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+		h2 { margin: 0 0 25px; max-width: 500px; font-family: 'Bebas Neue', Impact, sans-serif; font-size: clamp(2rem, 4vw, 3.15rem); line-height: 0.98; font-weight: 400; letter-spacing: 0.015em; }
+		.answers { display: grid; gap: 10px; }
+		.answer {
+			width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 15px; border: 1px solid #cbc7bd; color: var(--ink); background: transparent; font: inherit; font-size: 0.91rem; text-align: left; cursor: pointer; transition: 0.2s ease;
+		}
+		.answer:hover:not(:disabled) { border-color: var(--yellow-dark); background: #fff9df; transform: translateX(4px); }
+		.answer-key { display: grid; place-items: center; width: 25px; height: 25px; flex: 0 0 25px; color: #697281; border: 1px solid #b9b5ac; font-size: 0.72rem; font-weight: 700; }
+		.answer.correct { border-color: #39715d; background: #d9eee2; }
+		.answer.wrong { border-color: var(--red); background: #fae0dc; }
+		.answer.correct .answer-key { color: #fff; border-color: #39715d; background: #39715d; }
+		.answer.wrong .answer-key { color: #fff; border-color: var(--red); background: var(--red); }
+		.answer:disabled { cursor: default; }
+		.feedback { min-height: 22px; margin: 20px 0 0; font-size: 0.86rem; font-weight: 700; }
+		.feedback.good { color: #39715d; }
+		.feedback.bad { color: #c04444; }
+		.next-button, .restart-button { display: none; margin: 14px 0 0 auto; padding: 12px 18px; border: 0; color: var(--ink); background: var(--yellow); font: inherit; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+		.next-button:hover, .restart-button:hover { background: #ffd968; }
+		.results { display: none; text-align: center; padding: 26px 0 10px; }
+		.results-image { display: block; width: 90px; height: 58px; margin: 0 auto 16px; object-fit: contain; }
+		.results h2 { margin-bottom: 10px; }
+		.results p { margin: 0; color: #657080; }
+
+		footer { position: absolute; right: 0; bottom: 24px; left: 0; color: #627087; font-size: 0.7rem; letter-spacing: 0.1em; text-align: center; text-transform: uppercase; }
+		@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+		@media (max-width: 800px) {
+			.wrap { width: min(100% - 32px, 560px); }
+			main { grid-template-columns: 1fr; gap: 48px; padding: 58px 0 100px; }
+			h1 { font-size: clamp(4.5rem, 20vw, 7rem); }
+			.intro p { max-width: 500px; }
+			.quiz-panel { padding: 25px 20px; }
+			footer { position: relative; padding: 0 0 22px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="page-shell">
+		<div class="skyline" aria-hidden="true"></div>
+		<div class="wrap">
+			<header>
+				<div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">Gotham Archives</span></div>
+				<div class="case-label">Case file 001</div>
+			</header>
+
+			<main>
+				<section class="intro">
+					<div class="eyebrow">The world's greatest detective</div>
+					<h1>How well do you know <span>Batman?</span></h1>
+					<p>Five questions. One night in Gotham. Test your knowledge of the cape, the cowl, and the city that made him.</p>
+					<div class="fact"><div><strong>05</strong>questions</div><div><strong>01</strong>case file</div><div><strong>∞</strong>dedication</div></div>
+				</section>
+
+				<section class="quiz-panel" aria-label="Batman quiz">
+					<div class="panel-content">
+						<div id="quiz-view">
+							<div class="panel-top"><span id="progress-label">Question 01 / 05</span><span class="score">Score: <span id="score">00</span></span></div>
+							<div class="progress" aria-hidden="true"><div class="progress-bar" id="progress-bar"></div></div>
+							<p class="question-number" id="question-number">File 01</p>
+							<h2 id="question">Loading case file...</h2>
+							<div class="answers" id="answers"></div>
+							<p class="feedback" id="feedback" aria-live="polite"></p>
+							<button class="next-button" id="next-button" type="button">Next file <span aria-hidden="true">→</span></button>
+						</div>
+						<div class="results" id="results">
+							  <img class="results-image" src="batman-result.png" alt="Batman">
+							<p class="question-number">Case closed</p>
+							<h2 id="result-title">A worthy score.</h2>
+							<p id="result-copy"></p>
+							<button class="restart-button" id="restart-button" type="button">Reopen case</button>
+						</div>
+					</div>
+				</section>
+			</main>
+			<footer>Gotham City • Confidential • Est. 1939</footer>
+		</div>
+	</div>
+
+	<script>
+		const questions = [
+			{ question: 'What is Batman\'s real name?', answers: ['Clark Kent', 'Bruce Wayne', 'Oliver Queen', 'Hal Jordan'], correct: 1 },
+			{ question: 'Which city does Batman protect?', answers: ['Metropolis', 'Central City', 'Gotham City', 'Star City'], correct: 2 },
+			{ question: 'What is the name of Bruce Wayne\'s loyal butler?', answers: ['Alfred Pennyworth', 'James Gordon', 'Lucius Fox', 'Harvey Dent'], correct: 0 },
+			{ question: 'What symbol shines in the night sky to summon Batman?', answers: ['The Bat-Signal', 'The Moon Beacon', 'The Gotham Star', 'The Night Mark'], correct: 0 },
+			{ question: 'Which villain is known as the Clown Prince of Crime?', answers: ['The Riddler', 'Bane', 'The Joker', 'Two-Face'], correct: 2 }
+		];
+
+		let current = 0;
+		let score = 0;
+		let answered = false;
+		const question = document.getElementById('question');
+		const answers = document.getElementById('answers');
+		const feedback = document.getElementById('feedback');
+		const nextButton = document.getElementById('next-button');
+		const scoreDisplay = document.getElementById('score');
+		const progressBar = document.getElementById('progress-bar');
+
+		function renderQuestion() {
+			const item = questions[current];
+			answered = false;
+			document.getElementById('progress-label').textContent = `Question ${String(current + 1).padStart(2, '0')} / ${String(questions.length).padStart(2, '0')}`;
+			document.getElementById('question-number').textContent = `File ${String(current + 1).padStart(2, '0')}`;
+			progressBar.style.width = `${((current + 1) / questions.length) * 100}%`;
+			question.textContent = item.question;
+			feedback.textContent = '';
+			feedback.className = 'feedback';
+			nextButton.style.display = 'none';
+			answers.innerHTML = '';
+			item.answers.forEach((answer, index) => {
+				const button = document.createElement('button');
+				button.className = 'answer';
+				button.type = 'button';
+				button.innerHTML = `<span class="answer-key">${String.fromCharCode(65 + index)}</span><span>${answer}</span>`;
+				button.addEventListener('click', () => chooseAnswer(index, button));
+				answers.appendChild(button);
+			});
+		}
+
+		function chooseAnswer(index, selected) {
+			if (answered) return;
+			answered = true;
+			const item = questions[current];
+			const allAnswers = [...answers.children];
+			allAnswers.forEach((button, buttonIndex) => {
+				button.disabled = true;
+				if (buttonIndex === item.correct) button.classList.add('correct');
+			});
+			if (index === item.correct) {
+				score += 1;
+				scoreDisplay.textContent = String(score).padStart(2, '0');
+				feedback.textContent = 'Correct. The signal is clear.';
+				feedback.classList.add('good');
+			} else {
+				selected.classList.add('wrong');
+				feedback.textContent = `Not quite. The answer was ${item.answers[item.correct]}.`;
+				feedback.classList.add('bad');
+			}
+			nextButton.textContent = current === questions.length - 1 ? 'See result →' : 'Next file →';
+			nextButton.style.display = 'block';
+		}
+
+		nextButton.addEventListener('click', () => {
+			current += 1;
+			if (current < questions.length) renderQuestion();
+			else showResults();
+		});
+
+		function showResults() {
+			document.getElementById('quiz-view').style.display = 'none';
+			document.getElementById('results').style.display = 'block';
+			const title = document.getElementById('result-title');
+			const copy = document.getElementById('result-copy');
+			title.textContent = score === questions.length ? 'Gotham is safe.' : score >= 3 ? 'A worthy score.' : 'The case continues.';
+			copy.textContent = `You scored ${score} out of ${questions.length}. Every great detective keeps investigating.`;
+			document.getElementById('restart-button').style.display = 'inline-block';
+		}
+
+		document.getElementById('restart-button').addEventListener('click', () => {
+			current = 0;
+			score = 0;
+			scoreDisplay.textContent = '00';
+			document.getElementById('quiz-view').style.display = 'block';
+			document.getElementById('results').style.display = 'none';
+			renderQuestion();
+		});
+
+		renderQuestion();
+	</script>
+</body>
+</html>
